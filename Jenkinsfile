@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main ', url: 'https://github.com/Tabbukhan/awsCodeDeploy-Pipeline.git'
+                git branch: 'master ', url: 'https://github.com/Tabbukhan/awsCodeDeploy-Pipeline.git'
             }
         }
         stage('Package') {
@@ -15,6 +15,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
+                    withAWS(credentials: 'CodeDeploy', region: 'ap-south-1') {
+                    s3Upload(file: 'PipelineDeployment.zip', bucket: 'tabasumkhanmsa.com', path: 'PipelineDeployment/')
+                    
                     def codedeploy = awsCodeDeploy(
                         applicationName: 'PipelineDeployment',
                         deploymentGroupName: 'CICD-deploymentGroup',
